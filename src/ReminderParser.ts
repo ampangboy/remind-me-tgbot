@@ -1,12 +1,18 @@
 class ReminderParser {
-    constructor() {
-        // pass
-    }
-
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    static parse(_text: string) {
-        // pass
+    static tryParse(_text: string): Reminder {
+        return {
+            canParse: true,
+        };
     }
 }
 
 export default ReminderParser;
+
+export type Reminder = {
+    canParse: boolean;
+    parse?: {
+        id: string;
+        fullText: string;
+    };
+};

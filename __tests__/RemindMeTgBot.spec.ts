@@ -2,7 +2,7 @@ import RemindMeTgBot from "../src/RemindMeTgBot";
 import TelegramBotWrapperMock from "../src/TelegramBotWrapper";
 import { MessageInfo } from "node-telegram-bot-api";
 import EventEmitter from "regexemitter";
-import ReminderParserMock from "../src/ReminderParser";
+import ReminderParserMock, { Reminder } from "../src/ReminderParser";
 
 jest.mock("../src/TelegramBotWrapper");
 jest.mock("../src/ReminderParser");
@@ -72,21 +72,20 @@ describe("receiving text message", () => {
         expect(bot.reminderQueue.length).toEqual(0);
     });
 
-    it("will store reminder if text message start with /remindme", () => {
+    it("will not act if text message start with /remindme and not able to parse the text", () => {
         const text = "/remindme random text";
+
+        ReminderParserMock.tryParse = jest
+            .fn()
+            .mockImplementation((): Reminder => {
+                return { canParse: false };
+            });
 
         setupSendMessageEvent(text);
 
-        expect(bot.reminderQueue.length).toEqual(1);
-        expect(bot.reminderQueue[0]).toEqual(text);
-    });
+        expect(ReminderParserMock.tryParse).toHaveBeenCalledTimes(1);
+        expect(ReminderParserMock.tryParse).toHaveBeenCalledWith(text);
 
-    it("will call reminder text parser if textmessage start with /remindme", () => {
-        const text = "/remindme random text";
-
-        setupSendMessageEvent(text);
-
-        expect(ReminderParserMock.parse).toHaveBeenCalledTimes(1);
-        expect(ReminderParserMock.parse).toHaveBeenCalledWith(text);
+        expect(bot.reminderQueue.length).toEqual(0);
     });
 });
