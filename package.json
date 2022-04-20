@@ -4,7 +4,7 @@
     "description": "Create a reminder on telegram channel or group based on sets of commands",
     "main": "index.js",
     "scripts": {
-        "test": "echo \"Error: no test specified\" && exit 1",
+        "test": "npx jest --watch",
         "start": "npm run compile && set NODE_ENV=\"production\" && node ./bin/index.js",
         "dev": "npm run compile && set NODE_ENV=\"development\" && node ./bin/index.js",
         "compile": "npm run pre-compile && npx tsc --project tsconfig.json",
@@ -41,5 +41,8 @@
         "prettier": "^2.6.2",
         "ts-jest": "^27.1.4",
         "typescript": "^4.6.3"
+    },
+    "dependencies": {
+        "node-telegram-bot-api": "^0.56.0"
     }
 }

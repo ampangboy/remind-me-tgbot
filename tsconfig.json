@@ -1,23 +1,23 @@
 {
-  "extends": "@tsconfig/node14/tsconfig.json",
+    "extends": "@tsconfig/node14/tsconfig.json",
 
-  "compilerOptions": {
-    "outDir": "./bin",
-    "removeComments": true,
-    "esModuleInterop": true,
-    "forceConsistentCasingInFileNames": true,
+    "compilerOptions": {
+        "outDir": "./bin",
+        "removeComments": true,
+        "esModuleInterop": true,
+        "forceConsistentCasingInFileNames": true,
 
-    "strict": true,
-    "noImplicitAny": true,
-    "strictNullChecks": true,
-    "strictFunctionTypes": true,
-    "noImplicitThis": true,
-    "alwaysStrict": true,
-    "noUnusedLocals": true,
-    "noUnusedParameters": true,
-    "noImplicitReturns": true,
-    "skipLibCheck": true
-  },
-  "include": ["src/**/*"],
-  "exclude": ["./bin"]
+        "strict": true,
+        "noImplicitAny": true,
+        "strictNullChecks": true,
+        "strictFunctionTypes": true,
+        "noImplicitThis": true,
+        "alwaysStrict": true,
+        "noUnusedParameters": true,
+        "noImplicitReturns": true,
+        "skipLibCheck": true,
+        "typeRoots": ["./definitions", "./node_modules/@types"]
+    },
+    "include": ["src/**/*", "definitions"],
+    "exclude": ["./bin"]
 }
