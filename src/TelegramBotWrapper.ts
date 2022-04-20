@@ -1,16 +1,15 @@
-import TelegramBot from "node-telegram-bot-api";
+import TelegramBot, { MessageInfo } from "node-telegram-bot-api";
 
 class TelegramBotWrapper {
     constructor(token: string) {
-        this._bot = new TelegramBot(token, { pooling: true });
+        this._bot = new TelegramBot(token, { polling: true });
     }
 
     private _bot: TelegramBot;
 
     public onText(
-        regexp: string,
-        // eslint-disable-next-line @typescript-eslint/ban-types
-        callback: (msg: Object, match: Array<string>) => void,
+        regexp: RegExp,
+        callback: (msg: MessageInfo, match: Array<unknown>) => void,
     ): void {
         this._bot.onText(regexp, callback);
     }

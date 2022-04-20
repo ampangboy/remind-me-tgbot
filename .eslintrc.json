@@ -9,7 +9,8 @@
     ],
 
     "rules": {
-        "@typescript-eslint/no-unused-vars": ["error"]
+        "@typescript-eslint/no-unused-vars": ["error"],
+        "spaced-comment": ["error", "always", { "block": { "balanced": true } }]
     },
 
     "ignorePatterns": ["bin/**/*"]

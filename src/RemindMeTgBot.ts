@@ -5,12 +5,18 @@ class RemindMeTgBot {
         this._tgBot = new TelegramBotWrapper(token);
 
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        this._tgBot.onText("/remindme", (_msg, _match) => {
-            //empty
+        this._tgBot.onText(/^\/remindme (.+)/, (msg, _match) => {
+            this._reminderQueue.push(msg.text);
         });
     }
 
     private _tgBot: TelegramBotWrapper;
+
+    private _reminderQueue: string[] = [];
+
+    get reminderQueue(): string[] {
+        return this._reminderQueue;
+    }
 }
 
 export default RemindMeTgBot;
