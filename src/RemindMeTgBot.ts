@@ -1,3 +1,4 @@
+import ReminderParser from "./ReminderParser";
 import TelegramBotWrapper from "./TelegramBotWrapper";
 
 class RemindMeTgBot {
@@ -7,6 +8,7 @@ class RemindMeTgBot {
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
         this._tgBot.onText(/^\/remindme (.+)/, (msg, _match) => {
             this._reminderQueue.push(msg.text);
+            ReminderParser.parse(msg.text);
         });
     }
 

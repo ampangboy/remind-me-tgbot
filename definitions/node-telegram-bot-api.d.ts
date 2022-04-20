@@ -16,14 +16,14 @@ declare module "node-telegram-bot-api" {
             last_name?: string;
             language_code?: string;
         };
-        chat?: {
-            id?: number;
+        chat: {
+            id: number;
             first_name?: string;
             last_name?: string;
             type?: string;
         };
         date?: number;
-        text?: string;
+        text: string;
         entities?: Array<T>;
     };
 

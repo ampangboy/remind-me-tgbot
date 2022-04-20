@@ -2,19 +2,20 @@ import RemindMeTgBot from "../src/RemindMeTgBot";
 import TelegramBotWrapperMock from "../src/TelegramBotWrapper";
 import { MessageInfo } from "node-telegram-bot-api";
 import EventEmitter from "regexemitter";
+import ReminderParserMock from "../src/ReminderParser";
 
 jest.mock("../src/TelegramBotWrapper");
+jest.mock("../src/ReminderParser");
 
 let fakeToken: string;
-let _bot: RemindMeTgBot;
+let bot: RemindMeTgBot;
 
 beforeAll(() => {
     jest.clearAllMocks();
 
     fakeToken = "randomToken";
 
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    _bot = new RemindMeTgBot(fakeToken);
+    bot = new RemindMeTgBot(fakeToken);
 });
 
 describe("Instantiate RemindMetgBot", () => {
@@ -35,6 +36,10 @@ describe("Instantiate RemindMetgBot", () => {
 });
 
 describe("receiving text message", () => {
+    beforeEach(() => {
+        jest.clearAllMocks();
+    });
+
     const onTextEvent = new EventEmitter();
 
     TelegramBotWrapperMock.prototype.onText = jest
@@ -49,28 +54,39 @@ describe("receiving text message", () => {
         );
 
     const mockMatch: string[] = [];
-
     const mockMessageInfo: MessageInfo = {
         chat: {
             id: 0,
         },
+        text: "",
+    };
+
+    const setupSendMessageEvent = (text: string) => {
+        mockMessageInfo.text = text;
+        onTextEvent.emit(text, mockMessageInfo, mockMatch);
     };
 
     it("will not act if received text message which do not start with /remindme", () => {
-        const text = "/randomText /remindme";
-        mockMessageInfo.text = text;
+        setupSendMessageEvent("/randomText /remindme");
 
-        onTextEvent.emit(text, mockMessageInfo, mockMatch);
-
-        expect(_bot.reminderQueue.length).toEqual(0);
+        expect(bot.reminderQueue.length).toEqual(0);
     });
 
     it("will store reminder if text message start with /remindme", () => {
         const text = "/remindme random text";
-        mockMessageInfo.text = text;
 
-        onTextEvent.emit(text, mockMessageInfo, mockMatch);
+        setupSendMessageEvent(text);
 
-        expect(_bot.reminderQueue.length).toEqual(1);
+        expect(bot.reminderQueue.length).toEqual(1);
+        expect(bot.reminderQueue[0]).toEqual(text);
+    });
+
+    it("will call reminder text parser if textmessage start with /remindme", () => {
+        const text = "/remindme random text";
+
+        setupSendMessageEvent(text);
+
+        expect(ReminderParserMock.parse).toHaveBeenCalledTimes(1);
+        expect(ReminderParserMock.parse).toHaveBeenCalledWith(text);
     });
 });
