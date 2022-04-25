@@ -10,7 +10,12 @@
 
     "rules": {
         "@typescript-eslint/no-unused-vars": ["error"],
-        "spaced-comment": ["error", "always", { "block": { "balanced": true } }]
+        "spaced-comment": [
+            "error",
+            "always",
+            { "block": { "balanced": true } }
+        ],
+        "@typescript-eslint/no-non-null-assertion": "off"
     },
 
     "ignorePatterns": ["bin/**/*"]

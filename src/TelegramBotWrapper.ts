@@ -13,6 +13,10 @@ class TelegramBotWrapper {
     ): void {
         this._bot.onText(regexp, callback);
     }
+
+    public sendMessage(chatId: number, message: string): void {
+        this._bot.sendMessage(chatId, message);
+    }
 }
 
 export default TelegramBotWrapper;

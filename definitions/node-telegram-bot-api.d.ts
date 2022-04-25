@@ -6,6 +6,8 @@ declare module "node-telegram-bot-api" {
             regexp: RegExp,
             callback: (msg: MessageInfo, match: Array<T>) => void,
         ): void;
+
+        sendMessage(chatId: number, message: string): void;
     }
 
     export type MessageInfo = {
