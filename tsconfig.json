@@ -6,7 +6,6 @@
         "removeComments": true,
         "esModuleInterop": true,
         "forceConsistentCasingInFileNames": true,
-
         "strict": true,
         "noImplicitAny": true,
         "strictNullChecks": true,
@@ -16,12 +15,9 @@
         "noUnusedParameters": true,
         "noImplicitReturns": true,
         "skipLibCheck": true,
-        "typeRoots": ["./definitions", "./node_modules/@types"]
+        "typeRoots": ["./definitions", "./node_modules/@types"],
+        "sourceMap": true
     },
-    "include": [
-        "src/**/*",
-        "definitions",
-        "__tests__/definitions/regexemitter.d.ts"
-    ],
+    "include": ["src/**/*", "definitions"],
     "exclude": ["./bin"]
 }

@@ -25,7 +25,7 @@ class RemindMeTgBot {
     private _onTextCallback: (msg: MessageInfo, match: Array<unknown>) => void =
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
         (msg, _match) => {
-            const res: RemindmeTask = RemindmeParser.tryParse(msg.text);
+            const res: RemindmeTask = RemindmeParser.tryParse(msg);
 
             if (!res.canParse) {
                 this.sendHelpMessage(res.chatId);

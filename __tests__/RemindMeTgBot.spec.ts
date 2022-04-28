@@ -58,8 +58,8 @@ describe("receiving text message", () => {
             },
         );
 
-    const mockMatch: string[] = [];
-    const mockMessageInfo: MessageInfo = {
+    const fakeMatch: string[] = [];
+    const fakeMessageInfo: MessageInfo = {
         chat: {
             id: 0,
         },
@@ -67,8 +67,8 @@ describe("receiving text message", () => {
     };
 
     const setupSendMessageEvent = (text: string) => {
-        mockMessageInfo.text = text;
-        onTextEvent.emit(text, mockMessageInfo, mockMatch);
+        fakeMessageInfo.text = text;
+        onTextEvent.emit(text, fakeMessageInfo, fakeMatch);
     };
 
     it("will not try parse text message if received text message do not start with /remindme", () => {
@@ -95,11 +95,13 @@ describe("receiving text message", () => {
         setupSendMessageEvent(text);
 
         expect(RemindmeParserMock.tryParse).toHaveBeenCalledTimes(1);
-        expect(RemindmeParserMock.tryParse).toHaveBeenCalledWith(text);
+        expect(RemindmeParserMock.tryParse).toHaveBeenCalledWith(
+            fakeMessageInfo,
+        );
 
         expect(
             TelegramBotWrapperMock.prototype.sendMessage,
-        ).toHaveBeenCalledWith(mockMessageInfo.chat.id, failParseText);
+        ).toHaveBeenCalledWith(fakeMessageInfo.chat.id, failParseText);
 
         expect(bot.remindmeTask.length).toEqual(0);
     });
@@ -126,7 +128,9 @@ describe("receiving text message", () => {
         setupSendMessageEvent(text);
 
         expect(RemindmeParserMock.tryParse).toHaveBeenCalledTimes(1);
-        expect(RemindmeParserMock.tryParse).toHaveBeenCalledWith(text);
+        expect(RemindmeParserMock.tryParse).toHaveBeenCalledWith(
+            fakeMessageInfo,
+        );
 
         expect(CronNodeWrapperMock.prototype.schedule).toBeCalledWith(
             fakeReminder.parse!.cronExpression,
