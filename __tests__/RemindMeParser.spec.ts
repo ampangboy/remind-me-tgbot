@@ -66,12 +66,40 @@ describe("Parsing command", () => {
         ];
 
         optionalArgs.forEach((arg, i) => {
-            fakeMsg.text = `/remindme EVERYWEEK ${fakeNote} ${arg}`;
+            fakeMsg.text = `/remindme EVERYWEEK ${arg} ${fakeNote} `;
 
             const task = RemindmeParser.tryParse(fakeMsg);
 
             expect(task.canParse).toBe(true);
             expect(task.parse!.cronExpression).toBe(`0 4 * * ${i}`);
         });
+    });
+
+    it("cannot parse monthly without note", () => {
+        fakeMsg.text = "/remind EVERYMONTH";
+
+        const task = RemindmeParser.tryParse(fakeMsg);
+
+        expect(task.canParse).toBe(false);
+    });
+
+    it("can parse EVERYMONTH", () => {
+        const fakeNote = "fake note";
+        fakeMsg.text = `/remindme EVERYMONTH ${fakeNote}`;
+
+        const task = RemindmeParser.tryParse(fakeMsg);
+
+        expect(task.canParse).toBe(true);
+        expect(task.parse!.cronExpression).toBe("0 4 1 * *");
+    });
+
+    it("can parse EVERYMONTH with optional date parameter", () => {
+        const fakeNote = "fake note";
+        fakeMsg.text = `/remindme EVERYMONTH 10 ${fakeNote}`;
+
+        const task = RemindmeParser.tryParse(fakeMsg);
+
+        expect(task.canParse).toBe(true);
+        expect(task.parse!.cronExpression).toBe("0 4 10 * *");
     });
 });

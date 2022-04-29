@@ -51,11 +51,10 @@ class RemindMeTgBot {
         cron.schedule(reminder.parse!.cronExpression, () => {
             this._tgBot.sendMessage(reminder.chatId, reminder.parse!.note);
         });
-        cron.start();
-
         reminder.cron = cron;
 
         this._remindmeTask.push(reminder);
+        this._remindmeTask[this._remindmeTask.length - 1].cron?.start();
 
         this._tgBot.sendMessage(reminder.chatId, reminder.parse!.displayText);
     }

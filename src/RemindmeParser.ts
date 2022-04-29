@@ -6,13 +6,13 @@ class RemindmeParser {
     private static _startHour = 4;
 
     private static _dayArg: string[] = [
+        "SUN",
         "MON",
         "TUE",
         "WED",
         "THU",
         "FRI",
         "SAT",
-        "SUN",
     ];
 
     static tryParse(msg: MessageInfo): RemindmeTask {
@@ -34,6 +34,13 @@ class RemindmeParser {
             case "EVERYDAY":
                 res = this.processEverydayCommand(msg);
                 break;
+            case "EVERYWEEK":
+                res = this.processEveryWeekCommand(msg);
+                break;
+
+            case "EVERYMONTH":
+                res = this.processEveryMonthCommand(msg);
+                break;
             default:
                 res = failRes;
         }
@@ -53,7 +60,7 @@ class RemindmeParser {
 
         const id = uuidv1();
 
-        const note = token.slice(2, token.length).join();
+        const note = token.slice(2, token.length).join(" ");
 
         return {
             canParse: true,
@@ -62,8 +69,82 @@ class RemindmeParser {
                 id: id,
                 fullText: msg.text,
                 command: RemindmeCommand.Add,
-                displayText: `ID : ${id} %0A Note: ${note} %0A created!`,
+                displayText: `ID : ${id} \n Note: ${note} \n created!`,
                 cronExpression: `0 ${this._startHour} * * *`,
+                note: note,
+            },
+        };
+    }
+
+    private static processEveryWeekCommand(msg: MessageInfo) {
+        const token = msg.text.split(" ");
+        let defaultDay = 1;
+        let startNoteIndex = 2;
+
+        if (token.length === 2) {
+            return {
+                canParse: false,
+                chatId: msg.chat.id,
+            };
+        }
+
+        const foundDayIndex = this._dayArg.findIndex(d => d === token[2]);
+
+        if (foundDayIndex !== -1) {
+            defaultDay = foundDayIndex;
+            startNoteIndex = 3;
+        }
+
+        const id = uuidv1();
+
+        const note = token.slice(startNoteIndex, token.length).join(" ");
+
+        return {
+            canParse: true,
+            chatId: msg.chat.id,
+            parse: {
+                id: id,
+                fullText: msg.text,
+                command: RemindmeCommand.Add,
+                displayText: `ID : ${id} \nNote: ${note} \ncreated!`,
+                cronExpression: `0 ${this._startHour} * * ${defaultDay}`,
+                note: note,
+            },
+        };
+    }
+
+    private static processEveryMonthCommand(msg: MessageInfo) {
+        const token = msg.text.split(" ");
+        let defaultDate = 1;
+        let startNoteIndex = 2;
+
+        if (token.length === 2) {
+            return {
+                canParse: false,
+                chatId: msg.chat.id,
+            };
+        }
+
+        const foundDate = parseInt(token[2]);
+
+        if (!isNaN(foundDate)) {
+            defaultDate = foundDate;
+            startNoteIndex = 3;
+        }
+
+        const id = uuidv1();
+
+        const note = token.slice(startNoteIndex, token.length).join(" ");
+
+        return {
+            canParse: true,
+            chatId: msg.chat.id,
+            parse: {
+                id: id,
+                fullText: msg.text,
+                command: RemindmeCommand.Add,
+                displayText: `ID : ${id} \nNote: ${note} \ncreated!`,
+                cronExpression: `0 ${this._startHour} ${defaultDate} * *`,
                 note: note,
             },
         };
