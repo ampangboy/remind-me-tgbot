@@ -43,6 +43,7 @@ describe("Instantiate RemindMetgBot", () => {
 describe("receiving text message", () => {
     beforeEach(() => {
         jest.clearAllMocks();
+        bot.remindmeTask.pop();
     });
 
     const onTextEvent = new EventEmitter();
@@ -151,5 +152,44 @@ describe("receiving text message", () => {
             fakeReminder.chatId,
             fakeReminder.parse?.displayText,
         );
+    });
+
+    it("process the text message with command DELETE", () => {
+        const fakeId = "partialID";
+        const text = `/remindme DELETE ${fakeId}`;
+        fakeMessageInfo.text = text;
+        const fakeTaskToRemove: RemindmeTask = {
+            canParse: true,
+            chatId: 0,
+            parse: {
+                id: fakeId,
+                fullText: "text",
+                command: RemindmeCommand.Add,
+                cronExpression: "text",
+                displayText: "text",
+                note: "text",
+            },
+        };
+
+        const fakeTask: RemindmeTask = {
+            canParse: true,
+            chatId: 0,
+            parse: {
+                id: fakeId,
+                fullText: "fake text",
+                command: RemindmeCommand.Delete,
+                displayText: "fake display Text",
+            },
+        };
+
+        RemindmeParserMock.tryParse = jest
+            .fn()
+            .mockImplementation((): RemindmeTask => fakeTask);
+
+        bot.remindmeTask.push(fakeTaskToRemove);
+
+        setupSendMessageEvent(text);
+
+        expect(bot.remindmeTask).toHaveLength(0);
     });
 });

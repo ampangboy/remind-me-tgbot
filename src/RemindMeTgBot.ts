@@ -36,6 +36,8 @@ class RemindMeTgBot {
                 case RemindmeCommand.Add:
                     this.processAddReminder(res);
                     break;
+                case RemindmeCommand.Delete:
+                    this.processDeleteReminder(res);
             }
         };
 
@@ -48,8 +50,8 @@ class RemindMeTgBot {
 
     private processAddReminder(reminder: RemindmeTask): void {
         const cron = new CronNodeWrapper();
-        cron.schedule(reminder.parse!.cronExpression, () => {
-            this._tgBot.sendMessage(reminder.chatId, reminder.parse!.note);
+        cron.schedule(reminder.parse!.cronExpression!, () => {
+            this._tgBot.sendMessage(reminder.chatId, reminder.parse!.note!);
         });
         reminder.cron = cron;
 
@@ -57,6 +59,40 @@ class RemindMeTgBot {
         this._remindmeTask[this._remindmeTask.length - 1].cron?.start();
 
         this._tgBot.sendMessage(reminder.chatId, reminder.parse!.displayText);
+    }
+
+    private processDeleteReminder(task: RemindmeTask): void {
+        const filteredTask = this._remindmeTask.filter(
+            r =>
+                r.parse!.id.includes(task.parse!.id) &&
+                r.parse!.id.indexOf(task.parse!.id) === 0,
+        );
+
+        if (filteredTask.length === 0) {
+            this._tgBot.sendMessage(
+                task.chatId,
+                `Oh oh, Cannot find reminder with id ${task.parse!.id}`,
+            );
+            return;
+        }
+
+        if (filteredTask.length > 1) {
+            this._tgBot.sendMessage(
+                task.chatId,
+                "Found more than 1 task. Try to provide longer id",
+            );
+            return;
+        }
+
+        const indexTask = this._remindmeTask.indexOf(filteredTask[0]);
+
+        this._remindmeTask[indexTask].cron?.stop();
+        this._remindmeTask.splice(indexTask, 1);
+
+        this._tgBot.sendMessage(
+            task.chatId,
+            `task ${task.parse?.id} successfully deleted`,
+        );
     }
 }
 

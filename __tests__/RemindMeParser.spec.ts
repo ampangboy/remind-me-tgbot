@@ -102,4 +102,30 @@ describe("Parsing command", () => {
         expect(task.canParse).toBe(true);
         expect(task.parse!.cronExpression).toBe("0 4 10 * *");
     });
+
+    it("cannot parse DELETE without id", () => {
+        fakeMsg.text = "/remindme DELETE";
+
+        const task = RemindmeParser.tryParse(fakeMsg);
+
+        expect(task.canParse).toBe(false);
+    });
+
+    it("cannot parse DELETE with multiple id", () => {
+        fakeMsg.text = "/remindme DELETE id1 id2";
+
+        const task = RemindmeParser.tryParse(fakeMsg);
+
+        expect(task.canParse).toBe(false);
+    });
+
+    it("can parse DELETE command", () => {
+        const fakeId = "fakeId";
+        fakeMsg.text = `/remindme DELETE ${fakeId}`;
+
+        const task = RemindmeParser.tryParse(fakeMsg);
+
+        expect(task.canParse).toBe(true);
+        expect(task.parse!.id).toBe(fakeId);
+    });
 });

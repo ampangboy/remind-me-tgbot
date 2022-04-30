@@ -161,8 +161,8 @@ export type RemindmeTask = {
         fullText: string;
         command: RemindmeCommand;
         displayText: string;
-        cronExpression: string;
-        note: string;
+        cronExpression?: string;
+        note?: string;
     };
     cron?: CronNodeWrapper;
 };
