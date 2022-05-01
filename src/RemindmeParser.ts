@@ -1,6 +1,7 @@
 import { v1 as uuidv1 } from "uuid";
 import { MessageInfo } from "node-telegram-bot-api";
 import CronNodeWrapper from "./CronNodeWrapper";
+import { helpText } from "./infoText";
 
 class RemindmeParser {
     private static _startHour = 4;
@@ -41,11 +42,32 @@ class RemindmeParser {
             case "EVERYMONTH":
                 res = this.processEveryMonthCommand(msg);
                 break;
+
+            case "DELETE":
+                res = this.processDeleteCommand(msg);
+                break;
+
+            case "HELP":
+                res = this.processHelpCommand(msg);
+                break;
             default:
                 res = failRes;
         }
 
         return res;
+    }
+
+    private static processHelpCommand(msg: MessageInfo): RemindmeTask {
+        return {
+            canParse: true,
+            chatId: msg.chat.id,
+            parse: {
+                id: "invalidID",
+                fullText: msg.text,
+                command: RemindmeCommand.Help,
+                displayText: helpText,
+            },
+        };
     }
 
     private static processEverydayCommand(msg: MessageInfo): RemindmeTask {
@@ -149,6 +171,29 @@ class RemindmeParser {
             },
         };
     }
+
+    private static processDeleteCommand(msg: MessageInfo): RemindmeTask {
+        const token = msg.text.split(" ");
+        const startIdIndex = 2;
+
+        if (token.length !== 3) {
+            return {
+                canParse: false,
+                chatId: msg.chat.id,
+            };
+        }
+
+        return {
+            canParse: true,
+            chatId: msg.chat.id,
+            parse: {
+                id: token[startIdIndex],
+                fullText: msg.text,
+                displayText: `id ${token[startIdIndex]} is deleted`,
+                command: RemindmeCommand.Delete,
+            },
+        };
+    }
 }
 
 export default RemindmeParser;
@@ -170,4 +215,5 @@ export type RemindmeTask = {
 export enum RemindmeCommand {
     Add,
     Delete,
+    Help,
 }

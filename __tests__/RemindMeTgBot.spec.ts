@@ -7,6 +7,7 @@ import RemindmeParserMock, {
     RemindmeCommand,
 } from "../src/RemindmeParser";
 import CronNodeWrapperMock from "../src/CronNodeWrapper";
+import { helpText } from "../src/infoText";
 
 jest.mock("../src/TelegramBotWrapper");
 jest.mock("../src/RemindmeParser");
@@ -41,11 +42,6 @@ describe("Instantiate RemindMetgBot", () => {
 });
 
 describe("receiving text message", () => {
-    beforeEach(() => {
-        jest.clearAllMocks();
-        bot.remindmeTask.pop();
-    });
-
     const onTextEvent = new EventEmitter();
 
     TelegramBotWrapperMock.prototype.onText = jest
@@ -67,13 +63,18 @@ describe("receiving text message", () => {
         text: "text",
     };
 
-    const setupSendMessageEvent = (text: string) => {
+    const sendMessageEvent = (text: string) => {
         fakeMessageInfo.text = text;
         onTextEvent.emit(text, fakeMessageInfo, fakeMatch);
     };
 
+    beforeEach(() => {
+        jest.clearAllMocks();
+        bot.remindmeTask.pop();
+    });
+
     it("will not try parse text message if received text message do not start with /remindme", () => {
-        setupSendMessageEvent("/randomText /remindme");
+        sendMessageEvent("/randomText /remindme");
 
         expect(RemindmeParserMock.tryParse).toHaveBeenCalledTimes(0);
     });
@@ -93,7 +94,7 @@ describe("receiving text message", () => {
                 };
             });
 
-        setupSendMessageEvent(text);
+        sendMessageEvent(text);
 
         expect(RemindmeParserMock.tryParse).toHaveBeenCalledTimes(1);
         expect(RemindmeParserMock.tryParse).toHaveBeenCalledWith(
@@ -126,7 +127,7 @@ describe("receiving text message", () => {
             .fn()
             .mockImplementation((): RemindmeTask => fakeReminder);
 
-        setupSendMessageEvent(text);
+        sendMessageEvent(text);
 
         expect(RemindmeParserMock.tryParse).toHaveBeenCalledTimes(1);
         expect(RemindmeParserMock.tryParse).toHaveBeenCalledWith(
@@ -188,8 +189,33 @@ describe("receiving text message", () => {
 
         bot.remindmeTask.push(fakeTaskToRemove);
 
-        setupSendMessageEvent(text);
+        sendMessageEvent(text);
 
         expect(bot.remindmeTask).toHaveLength(0);
+    });
+
+    it("process the HELP text", () => {
+        const msg = `/remindme HELP`;
+        const fakeTask: RemindmeTask = {
+            canParse: true,
+            chatId: 0,
+            parse: {
+                id: "fakeId",
+                fullText: msg,
+                command: RemindmeCommand.Help,
+                displayText: helpText,
+            },
+        };
+
+        RemindmeParserMock.tryParse = jest
+            .fn()
+            .mockImplementation((): RemindmeTask => fakeTask);
+
+        sendMessageEvent(msg);
+
+        expect(TelegramBotWrapperMock.prototype.sendMessage).toBeCalledTimes(1);
+        expect(
+            TelegramBotWrapperMock.prototype.sendMessage,
+        ).toHaveBeenCalledWith(fakeTask.chatId, fakeTask.parse!.displayText);
     });
 });

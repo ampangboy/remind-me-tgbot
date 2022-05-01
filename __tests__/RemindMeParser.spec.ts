@@ -1,5 +1,6 @@
 import RemindmeParser from "../src/RemindmeParser";
 import { MessageInfo } from "node-telegram-bot-api";
+import { helpText } from "../src/infoText";
 
 describe("Parsing command", () => {
     const fakeChatId = 0;
@@ -127,5 +128,14 @@ describe("Parsing command", () => {
 
         expect(task.canParse).toBe(true);
         expect(task.parse!.id).toBe(fakeId);
+    });
+
+    it("can parse HELP command", () => {
+        fakeMsg.text = `/remindme HELP`;
+
+        const task = RemindmeParser.tryParse(fakeMsg);
+
+        expect(task.canParse).toBe(true);
+        expect(task.parse!.displayText).toBe(helpText);
     });
 });

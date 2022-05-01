@@ -38,6 +38,10 @@ class RemindMeTgBot {
                     break;
                 case RemindmeCommand.Delete:
                     this.processDeleteReminder(res);
+                    break;
+                case RemindmeCommand.Help:
+                    this.processHelp(res);
+                    break;
             }
         };
 
@@ -93,6 +97,10 @@ class RemindMeTgBot {
             task.chatId,
             `task ${task.parse?.id} successfully deleted`,
         );
+    }
+
+    private processHelp(task: RemindmeTask): void {
+        this._tgBot.sendMessage(task.chatId, task.parse!.displayText);
     }
 }
 
