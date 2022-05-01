@@ -1,5 +1,6 @@
 import { MessageInfo } from "node-telegram-bot-api";
 import CronNodeWrapper from "./CronNodeWrapper";
+import { failParseText } from "./infoText";
 import RemindmeParser, {
     RemindmeTask,
     RemindmeCommand,
@@ -28,7 +29,7 @@ class RemindMeTgBot {
             const res: RemindmeTask = RemindmeParser.tryParse(msg);
 
             if (!res.canParse) {
-                this.sendHelpMessage(res.chatId);
+                this.sendFailParseMessage(res.chatId);
                 return;
             }
 
@@ -45,11 +46,8 @@ class RemindMeTgBot {
             }
         };
 
-    private sendHelpMessage(chatId: number): void {
-        const message =
-            'Ouh! Sorry, I\'m having trouble to understand the instruction. Type "/remindme HELP" for usage';
-
-        this._tgBot.sendMessage(chatId, message);
+    private sendFailParseMessage(chatId: number): void {
+        this._tgBot.sendMessage(chatId, failParseText);
     }
 
     private processAddReminder(reminder: RemindmeTask): void {
@@ -83,7 +81,7 @@ class RemindMeTgBot {
         if (filteredTask.length > 1) {
             this._tgBot.sendMessage(
                 task.chatId,
-                "Found more than 1 task. Try to provide longer id",
+                "Found more than 1 task. Try to provide a longer id",
             );
             return;
         }

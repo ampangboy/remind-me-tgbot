@@ -13,3 +13,5 @@ export const helpText = `Usage:
       date argument. If date argument is not provided, it
       will default to 1st of month. Day argument only
       accept value from 1 - 28.`;
+
+export const failParseText = `Ouh! Sorry, I'm having trouble to understand the instruction. Type "/remindme HELP" for usage`;
