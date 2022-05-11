@@ -8,6 +8,8 @@ declare module "node-telegram-bot-api" {
         ): void;
 
         sendMessage(chatId: number, message: string): void;
+
+        on(event: string, callback: (msg: MessageInfo) => void): void;
     }
 
     export type MessageInfo = {

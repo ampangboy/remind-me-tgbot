@@ -11,8 +11,8 @@ class RemindMeTgBot {
     constructor(token: string) {
         this._tgBot = new TelegramBotWrapper(token);
 
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
         this._tgBot.onText(/^\/remindme (.+)/, this._onTextCallback);
+        this._tgBot.onChannelText(/^\/remindme (.+)/, this._onTextCallback);
     }
 
     private _tgBot: TelegramBotWrapper;

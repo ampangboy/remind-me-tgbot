@@ -1,17 +1,20 @@
 export const helpText = `Usage: 
-    /remindme EVERYDAY [note]
-    - Schedule the note to be send everyday
+/remindme EVERYDAY [note]
+- Schedule the note to be send everyday
 
-    /remindme EVERYWEEK [day]? [note]
-    - Schedule the note to be send everyweek on provided
-      day argument. If day argument is not provided, it
-      will default to Monday. Day argument only accept
-      "MON", "TUE", "WED", "THU", "FRI", "SAT", and "SUN".
+/remindme EVERYWEEK [day]? [note]
+- Schedule the note to be send everyweek on provided day argument. \
+If day argument is not provided, it will default to Monday. Day argument\
+only accept "MON", "TUE", "WED", "THU", "FRI", "SAT", and "SUN".
       
-    /remindme EVERYMONTH [date]? [note]
-    - Schedule the note to be send everyweek on provided
-      date argument. If date argument is not provided, it
-      will default to 1st of month. Day argument only
-      accept value from 1 - 28.`;
+/remindme EVERYMONTH [date]? [note]
+- Schedule the note to be send everyweek on provided \
+date argument. If date argument is not provided, it \
+will default to 1st of month. Day argument only \
+accept value from 1 - 28.
 
-export const failParseText = `Ouh! Sorry, I'm having trouble to understand the instruction. Type "/remindme HELP" for usage`;
+/remindme DELETE [note id]
+- Remove the note from the queue`;
+
+export const failParseText = `Ouh! Sorry, I'm having trouble to understand the \
+instruction. Type "/remindme HELP" for usage`;

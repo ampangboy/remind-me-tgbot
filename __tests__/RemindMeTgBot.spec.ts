@@ -39,8 +39,19 @@ describe("Instantiate RemindMetgBot", () => {
             1,
         );
     });
+
+    it("called the onChannelText methid with '/remindme regex and a callback as parameter", () => {
+        expect(
+            TelegramBotWrapperMock.prototype.onChannelText,
+        ).toHaveBeenCalledWith(/^\/remindme (.+)/, expect.any(Function));
+        expect(
+            TelegramBotWrapperMock.prototype.onChannelText,
+        ).toHaveBeenCalledTimes(1);
+    });
 });
 
+// onText and onChannelText have the same signature. Hence testing one will gurantee
+// of correctness of the other.
 describe("receiving text message", () => {
     const onTextEvent = new EventEmitter();
 
