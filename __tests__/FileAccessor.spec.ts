@@ -1,4 +1,5 @@
 import fs from "fs";
+import FileAccessor from "../src/FileAccessor";
 
 const fakeFilepath = "\\fakefile.txt";
 
@@ -10,33 +11,41 @@ describe("CRUD on file accessor", () => {
             throw new Error();
         });
 
-        const fileAccesor = new FileAccessor(fakeFilepath);
+        const file = new FileAccessor(fakeFilepath);
 
-        expect(fileAccesor.read()).toThrow(IO_Error);
+        expect(() => {
+            file.read();
+        }).toThrowError("unable to read the file");
+        expect(fs.readFileSync).toHaveBeenNthCalledWith(1, fakeFilepath, {
+            encoding: "utf8",
+        });
     });
 
     it("append task to file", () => {
         jest.spyOn(fs, "appendFileSync").mockReturnValueOnce(undefined);
 
-        const fileAccesor = new FileAccessor(fakeFilepath);
-        fileAccesor.append("appended text");
+        const file = new FileAccessor(fakeFilepath);
+        file.append("appended text");
 
         expect(fs.appendFileSync).toHaveBeenCalledWith(
             fakeFilepath,
-            "\nappended text",
+            "appended text",
         );
     });
 
-    it("read and delete task in file", () => {
-        const firstLine = "Text 1\nText 2";
-        const buff = Buffer.from(firstLine, "utf8");
+    it("delete task in file", () => {
+        const content = "Text 1\nText 2\nText 3";
 
-        jest.spyOn(fs, "readFileSync").mockReturnValue(buff);
+        jest.spyOn(fs, "readFileSync").mockReturnValue(content);
         jest.spyOn(fs, "writeFileSync").mockReturnValueOnce(undefined);
 
         const fileAccesor = new FileAccessor(fakeFilepath);
         fileAccesor.delete("Text 2");
 
-        expect(fs.writeFileSync).toHaveBeenCalledWith("fakeFilepath", "Text1");
+        expect(fs.writeFileSync).toHaveBeenCalledWith(
+            fakeFilepath,
+            "Text 1\nText 3",
+        );
+        expect(fs.writeFileSync).toHaveBeenCalledTimes(1);
     });
 });
