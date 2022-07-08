@@ -39,8 +39,8 @@ describe("CRUD on file accessor", () => {
         jest.spyOn(fs, "readFileSync").mockReturnValue(content);
         jest.spyOn(fs, "writeFileSync").mockReturnValueOnce(undefined);
 
-        const fileAccesor = new FileAccessor(fakeFilepath);
-        fileAccesor.delete("Text 2");
+        const file = new FileAccessor(fakeFilepath);
+        file.delete("Text 2");
 
         expect(fs.writeFileSync).toHaveBeenCalledWith(
             fakeFilepath,

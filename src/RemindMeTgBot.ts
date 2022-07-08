@@ -1,5 +1,7 @@
 import { MessageInfo } from "node-telegram-bot-api";
+import path from "path";
 import CronNodeWrapper from "./CronNodeWrapper";
+import FileAccessor from "./FileAccessor";
 import { failParseText } from "./infoText";
 import RemindmeParser, {
     RemindmeTask,
@@ -13,7 +15,10 @@ class RemindMeTgBot {
 
         this._tgBot.onText(/^\/remindme (.+)/, this._onTextCallback);
         this._tgBot.onChannelText(/^\/remindme (.+)/, this._onTextCallback);
+        this._file = new FileAccessor(path.join(__dirname, "./tasks.txt"));
     }
+
+    private _file: FileAccessor;
 
     private _tgBot: TelegramBotWrapper;
 
